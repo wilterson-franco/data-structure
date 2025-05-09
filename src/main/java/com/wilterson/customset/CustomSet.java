@@ -1,9 +1,12 @@
 package com.wilterson.customset;
 
-public class CustomSet {
+public interface CustomSet<T> {
 
-    public static void main(String[] args) {
+    void add(T element);
 
-        System.out.println( "Hello World!" );
-    }
+    boolean remove(T element);
+
+    boolean contain(T element);
+
+    int size();
 }
