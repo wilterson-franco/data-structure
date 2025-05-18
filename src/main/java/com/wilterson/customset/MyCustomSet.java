@@ -7,24 +7,41 @@ package com.wilterson.customset;
  * methods using arrays -- use of dict is not allowed.
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MyCustomSet<T> implements CustomSet<T> {
 
-    private final Bucket bucket;
+    private static final int NUMBER_BUCKETS = 4;
+    private final List<Bucket> buckets;
 
     public MyCustomSet() {
-        bucket = new ArrayBucket();
+
+        buckets = new ArrayList<>(NUMBER_BUCKETS);
+
+        for (int i = 0; i < NUMBER_BUCKETS; i++) {
+            buckets.add(new ArrayBucket());
+        }
     }
 
     public MyCustomSet(Class<Bucket> bucketClass) {
+
+        buckets = new ArrayList<>(NUMBER_BUCKETS);
+
         try {
-            this.bucket = bucketClass.getDeclaredConstructor(null).newInstance();
+            for (int i = 0; i < NUMBER_BUCKETS; i++) {
+                buckets.add(bucketClass.getDeclaredConstructor(null).newInstance());
+            }
         } catch (Exception exception) {
             throw new RuntimeException("Can't construct MyCustomSet");
         }
     }
 
     public int size() {
-        return bucket.size();
+        return buckets
+                .stream()
+                .mapToInt(Bucket::size)
+                .sum();
     }
 
     public void add(T element) {
@@ -33,22 +50,31 @@ public class MyCustomSet<T> implements CustomSet<T> {
             return;
         }
 
-        bucket.add(element);
+        getBucketForElement(element).add(element);
     }
 
     @Override
     public boolean remove(T element) {
 
-        if (bucket.indexOf(element) == -1) {
+        if (getBucketForElement(element).indexOf(element) == -1) {
             return false;
         }
 
-        return bucket.remove(element);
+        return getBucketForElement(element).remove(element);
     }
 
     @Override
     public boolean contain(T element) {
-        return bucket.indexOf(element) != -1;
+        return getBucketForElement(element).indexOf(element) != -1;
+    }
+
+    private int findBucketIndex(T element) {
+        return (NUMBER_BUCKETS - 1) & element.hashCode();
+    }
+
+    private Bucket getBucketForElement(T element) {
+        int bucketIndex = findBucketIndex(element);
+        return buckets.get(bucketIndex);
     }
 }
 

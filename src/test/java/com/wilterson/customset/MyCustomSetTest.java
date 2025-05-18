@@ -1,7 +1,6 @@
 package com.wilterson.customset;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
