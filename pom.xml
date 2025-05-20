@@ -14,9 +14,9 @@
         <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <junit.version>5.9.1</junit.version>
-        <lombok.version>1.18.24</lombok.version>
-        <assertj.version>3.23.1</assertj.version>
+        <junit.version>5.12.2</junit.version>
+        <lombok.version>1.18.38</lombok.version>
+        <assertj.version>3.27.3</assertj.version>
     </properties>
 
     <dependencies>

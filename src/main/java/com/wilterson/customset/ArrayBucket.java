@@ -11,13 +11,13 @@ public class ArrayBucket implements Bucket {
     }
 
     @Override
-    public void add(Object element) {
+    public void add(Object data) {
 
         if (isFull()) {
             // TODO: expand the capacity
         }
 
-        elements[tail] = element;
+        elements[tail] = data;
         tail++;
     }
 
@@ -27,25 +27,19 @@ public class ArrayBucket implements Bucket {
     }
 
     @Override
-    public int indexOf(Object element) {
+    public boolean contain(Object element) {
 
-        for (int i = 0; i < tail; i++) {
-            if (equal(elements[i], element)) {
-                return i;
-            }
+        if (indexOf(element) == -1) {
+            return false;
         }
 
-        return -1;
+        return true;
     }
 
     @Override
     public boolean remove(Object element) {
 
-        return remove(indexOf(element));
-    }
-
-    @Override
-    public boolean remove(int index) {
+        int index = indexOf(element);
 
         if (index == -1) {
             return false;
@@ -69,5 +63,16 @@ public class ArrayBucket implements Bucket {
 
     private boolean isFull() {
         return elements.length == tail;
+    }
+
+    private int indexOf(Object element) {
+
+        for (int i = 0; i < tail; i++) {
+            if (equal(elements[i], element)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }

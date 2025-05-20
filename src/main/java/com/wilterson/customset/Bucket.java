@@ -6,9 +6,7 @@ public interface Bucket {
 
     int size();
 
-    int indexOf(Object element);
-
     boolean remove(Object element);
 
-    boolean remove(int index);
+    boolean contain(Object element);
 }

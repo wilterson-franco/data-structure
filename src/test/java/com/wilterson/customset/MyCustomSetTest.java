@@ -180,7 +180,8 @@ class MyCustomSetTest {
     private static Stream<Arguments> bucketTypes() {
         return Stream.of(
                 Arguments.of(ListBucket.class),
-                Arguments.of(ArrayBucket.class)
+                Arguments.of(ArrayBucket.class),
+                Arguments.of(LinkedListBuket.class)
         );
     }
 }

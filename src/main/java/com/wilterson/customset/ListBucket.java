@@ -22,18 +22,12 @@ class ListBucket implements Bucket {
     }
 
     @Override
-    public int indexOf(Object element) {
-        return elements.indexOf(element);
-    }
-
-    @Override
     public boolean remove(Object element) {
         return elements.remove(element);
     }
 
     @Override
-    public boolean remove(int index) {
-        elements.remove(index);
-        return true;
+    public boolean contain(Object element) {
+        return elements.contains(element);
     }
 }

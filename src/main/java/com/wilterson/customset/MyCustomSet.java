@@ -56,7 +56,7 @@ public class MyCustomSet<T> implements CustomSet<T> {
     @Override
     public boolean remove(T element) {
 
-        if (getBucketForElement(element).indexOf(element) == -1) {
+        if (!contain(element)) {
             return false;
         }
 
@@ -65,7 +65,7 @@ public class MyCustomSet<T> implements CustomSet<T> {
 
     @Override
     public boolean contain(T element) {
-        return getBucketForElement(element).indexOf(element) != -1;
+        return getBucketForElement(element).contain(element);
     }
 
     private int findBucketIndex(T element) {
