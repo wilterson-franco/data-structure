@@ -8,5 +8,5 @@ public interface Bucket {
 
     boolean remove(Object element);
 
-    boolean contain(Object element);
+    boolean contains(Object element);
 }

@@ -3,11 +3,11 @@ package com.wilterson.customset;
 import java.util.LinkedList;
 import java.util.List;
 
-class ListBucket implements Bucket {
+class BucketList implements Bucket {
 
     private final List<Object> elements;
 
-    public ListBucket() {
+    public BucketList() {
         elements = new LinkedList<>();
     }
 
@@ -27,7 +27,7 @@ class ListBucket implements Bucket {
     }
 
     @Override
-    public boolean contain(Object element) {
+    public boolean contains(Object element) {
         return elements.contains(element);
     }
 }

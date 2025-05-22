@@ -1,10 +1,11 @@
 package com.wilterson.customset;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-@AllArgsConstructor
+@Getter
+@Builder
 public class Node {
 
     @Getter
@@ -12,4 +13,7 @@ public class Node {
 
     @Setter
     private Node next;
+
+    @Setter
+    private Node previous;
 }

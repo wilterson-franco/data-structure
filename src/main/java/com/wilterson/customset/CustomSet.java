@@ -6,7 +6,7 @@ public interface CustomSet<T> {
 
     boolean remove(T element);
 
-    boolean contain(T element);
+    boolean contains(T element);
 
     int size();
 }

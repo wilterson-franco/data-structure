@@ -7,14 +7,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class MyCustomSetTest {
+class CustomHashSetTest {
 
     @ParameterizedTest
     @MethodSource("bucketTypes")
     void givenEmptySet_whenSizeInvoked_thenSizeShouldBeZero(Class<Bucket> bucketClass) {
 
         // given
-        CustomSet<String> customSet = new MyCustomSet<>(bucketClass);
+        CustomSet<String> customSet = new CustomHashSet<>(bucketClass);
 
         // when
         int size = customSet.size();
@@ -28,7 +28,7 @@ class MyCustomSetTest {
     void givenNewSet_whenOneElementAdded_thenSizeShouldBeOne(Class<Bucket> bucketClass) {
 
         // given
-        CustomSet<String> customSet = new MyCustomSet<>(bucketClass);
+        CustomSet<String> customSet = new CustomHashSet<>(bucketClass);
         customSet.add("element");
 
         // when
@@ -43,7 +43,7 @@ class MyCustomSetTest {
     void givenNewSet_whenTwoElementsAdded_thenSizeShouldBeTwo(Class<Bucket> bucketClass) {
 
         // given
-        CustomSet<String> customSet = new MyCustomSet<>(bucketClass);
+        CustomSet<String> customSet = new CustomHashSet<>(bucketClass);
         customSet.add("element1");
         customSet.add("element2");
 
@@ -59,7 +59,7 @@ class MyCustomSetTest {
     void givenNewSet_whenSameElementAddedTwice_thenSizeShouldBeOne(Class<Bucket> bucketClass) {
 
         // given
-        CustomSet<String> customSet = new MyCustomSet<>(bucketClass);
+        CustomSet<String> customSet = new CustomHashSet<>(bucketClass);
         customSet.add("element");
 
         // when
@@ -74,11 +74,11 @@ class MyCustomSetTest {
     void givenNotEmptySet_whenExistingElementChecked_thenItShouldBeTrue(Class<Bucket> bucketClass) {
 
         // give
-        CustomSet<String> customSet = new MyCustomSet<>(bucketClass);
+        CustomSet<String> customSet = new CustomHashSet<>(bucketClass);
         customSet.add("element");
 
         // when
-        boolean contain = customSet.contain("element");
+        boolean contain = customSet.contains("element");
 
         // then
         assertThat(contain).isTrue();
@@ -89,11 +89,11 @@ class MyCustomSetTest {
     void givenNotEmptySet_whenNonExistingElementChecked_thenItShouldBeFalse(Class<Bucket> bucketClass) {
 
         // give
-        CustomSet<String> customSet = new MyCustomSet<>(bucketClass);
+        CustomSet<String> customSet = new CustomHashSet<>(bucketClass);
         customSet.add("element");
 
         // when
-        boolean contain = customSet.contain("non existing element");
+        boolean contain = customSet.contains("non existing element");
 
         // then
         assertThat(contain).isFalse();
@@ -104,7 +104,7 @@ class MyCustomSetTest {
     void givenSetWithOneElement_whenElementRemoved_thenSizeShouldBeZero_thenContainShouldBeFalse(Class<Bucket> bucketClass) {
 
         // given
-        CustomSet<String> customSet = new MyCustomSet<>(bucketClass);
+        CustomSet<String> customSet = new CustomHashSet<>(bucketClass);
         customSet.add("element");
 
         // when
@@ -112,29 +112,46 @@ class MyCustomSetTest {
 
         // then
         assertThat(customSet.size()).isZero();
-        assertThat(customSet.contain("element")).isFalse();
+        assertThat(customSet.contains("element")).isFalse();
     }
 
     @ParameterizedTest
     @MethodSource("bucketTypes")
-    void givenSetFullCapacity_whenLastElementRemoved_thenSizeShouldBeThree_thenContainShouldBeFalse(Class<Bucket> bucketClass) {
+    void givenSetFullCapacity_whenElementRemoved_thenSizeShouldBeThree_thenContainShouldBeFalse(Class<Bucket> bucketClass) {
 
         // given
-        CustomSet<String> customSet = new MyCustomSet<>(bucketClass);
+        CustomSet<String> customSet = new CustomHashSet<>(bucketClass);
         customSet.add("element1");
         customSet.add("element2");
         customSet.add("element3");
         customSet.add("element4");
+        customSet.add("element5"); // chosen on purpose because it falls in the same bucket as "element1"
 
         // when
-        customSet.remove("element4");
+        customSet.remove("element1");
 
         // then
-        assertThat(customSet.size()).isEqualTo(3);
-        assertThat(customSet.contain("element1")).isTrue();
-        assertThat(customSet.contain("element2")).isTrue();
-        assertThat(customSet.contain("element3")).isTrue();
-        assertThat(customSet.contain("element4")).isFalse();
+        assertThat(customSet.size()).isEqualTo(4);
+        assertThat(customSet.contains("element1")).isFalse();
+        assertThat(customSet.contains("element2")).isTrue();
+        assertThat(customSet.contains("element3")).isTrue();
+        assertThat(customSet.contains("element4")).isTrue();
+        assertThat(customSet.contains("element5")).isTrue();
+    }
+
+    @ParameterizedTest
+    @MethodSource("bucketTypes")
+    void givenSetWithOneElement_whenNonexistentElementRemoved_thenSizeShouldBeOne(Class<Bucket> bucketClass) {
+
+        // given
+        CustomSet<Integer> customSet = new CustomHashSet<>(bucketClass);
+        customSet.add(1);
+
+        // when
+        customSet.remove(2);
+
+        // then
+        assertThat(customSet.size()).isOne();
     }
 
     @ParameterizedTest
@@ -142,7 +159,7 @@ class MyCustomSetTest {
     void givenSetFullCapacity_whenFirstElementRemoved_thenSizeShouldBeThree_thenContainShouldBeFalse(Class<Bucket> bucketClass) {
 
         // given
-        CustomSet<String> customSet = new MyCustomSet<>(bucketClass);
+        CustomSet<String> customSet = new CustomHashSet<>(bucketClass);
         customSet.add("element1");
         customSet.add("element2");
         customSet.add("element3");
@@ -153,10 +170,10 @@ class MyCustomSetTest {
 
         // then
         assertThat(customSet.size()).isEqualTo(3);
-        assertThat(customSet.contain("element1")).isFalse();
-        assertThat(customSet.contain("element2")).isTrue();
-        assertThat(customSet.contain("element3")).isTrue();
-        assertThat(customSet.contain("element4")).isTrue();
+        assertThat(customSet.contains("element1")).isFalse();
+        assertThat(customSet.contains("element2")).isTrue();
+        assertThat(customSet.contains("element3")).isTrue();
+        assertThat(customSet.contains("element4")).isTrue();
     }
 
     @ParameterizedTest
@@ -164,7 +181,7 @@ class MyCustomSetTest {
     void givenSetFullCapacity_whenExistentElementAdded_thenSizeShouldNotChange(Class<Bucket> bucketClass) {
 
         // given
-        CustomSet<String> customSet = new MyCustomSet<>(bucketClass);
+        CustomSet<String> customSet = new CustomHashSet<>(bucketClass);
         customSet.add("element1");
         customSet.add("element2");
         customSet.add("element3");
@@ -179,9 +196,9 @@ class MyCustomSetTest {
 
     private static Stream<Arguments> bucketTypes() {
         return Stream.of(
-                Arguments.of(ListBucket.class),
-                Arguments.of(ArrayBucket.class),
-                Arguments.of(LinkedListBuket.class)
+                Arguments.of(BucketList.class),
+                Arguments.of(BucketArray.class),
+                Arguments.of(BuketLinkedList.class)
         );
     }
 }

@@ -1,12 +1,12 @@
 package com.wilterson.customset;
 
-public class ArrayBucket implements Bucket {
+public class BucketArray implements Bucket {
 
     private static final int INITIAL_CAPACITY = 4;
     private final Object[] elements;
     private int tail;
 
-    public ArrayBucket() {
+    public BucketArray() {
         elements = new Object[INITIAL_CAPACITY];
     }
 
@@ -27,7 +27,7 @@ public class ArrayBucket implements Bucket {
     }
 
     @Override
-    public boolean contain(Object element) {
+    public boolean contains(Object element) {
 
         if (indexOf(element) == -1) {
             return false;

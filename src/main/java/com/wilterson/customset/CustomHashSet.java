@@ -10,26 +10,32 @@ package com.wilterson.customset;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyCustomSet<T> implements CustomSet<T> {
+public class CustomHashSet<T> implements CustomSet<T> {
 
-    private static final int NUMBER_BUCKETS = 4;
+    private static final int DEFAULT_CAPACITY = 4;
+    private int capacity;
+
     private final List<Bucket> buckets;
 
-    public MyCustomSet() {
+    public CustomHashSet() {
 
-        buckets = new ArrayList<>(NUMBER_BUCKETS);
+        capacity = DEFAULT_CAPACITY;
 
-        for (int i = 0; i < NUMBER_BUCKETS; i++) {
-            buckets.add(new ArrayBucket());
+        buckets = new ArrayList<>(DEFAULT_CAPACITY);
+
+        for (int i = 0; i < DEFAULT_CAPACITY; i++) {
+            buckets.add(new BucketArray());
         }
     }
 
-    public MyCustomSet(Class<Bucket> bucketClass) {
+    public CustomHashSet(Class<Bucket> bucketClass) {
 
-        buckets = new ArrayList<>(NUMBER_BUCKETS);
+        capacity = DEFAULT_CAPACITY;
+
+        buckets = new ArrayList<>(DEFAULT_CAPACITY);
 
         try {
-            for (int i = 0; i < NUMBER_BUCKETS; i++) {
+            for (int i = 0; i < DEFAULT_CAPACITY; i++) {
                 buckets.add(bucketClass.getDeclaredConstructor(null).newInstance());
             }
         } catch (Exception exception) {
@@ -37,16 +43,11 @@ public class MyCustomSet<T> implements CustomSet<T> {
         }
     }
 
-    public int size() {
-        return buckets
-                .stream()
-                .mapToInt(Bucket::size)
-                .sum();
-    }
 
+    @Override
     public void add(T element) {
 
-        if (contain(element)) {
+        if (contains(element)) {
             return;
         }
 
@@ -55,27 +56,27 @@ public class MyCustomSet<T> implements CustomSet<T> {
 
     @Override
     public boolean remove(T element) {
-
-        if (!contain(element)) {
-            return false;
-        }
-
         return getBucketForElement(element).remove(element);
     }
 
     @Override
-    public boolean contain(T element) {
-        return getBucketForElement(element).contain(element);
+    public boolean contains(T element) {
+        return getBucketForElement(element).contains(element);
     }
 
-    private int findBucketIndex(T element) {
-        return (NUMBER_BUCKETS - 1) & element.hashCode();
+    @Override
+    public int size() {
+        return buckets
+                .stream()
+                .mapToInt(Bucket::size)
+                .sum();
     }
 
     private Bucket getBucketForElement(T element) {
-        int bucketIndex = findBucketIndex(element);
-        return buckets.get(bucketIndex);
+        return buckets.get(findBucketIndexForElement(element));
+    }
+
+    private int findBucketIndexForElement(T element) {
+        return (capacity - 1) & element.hashCode();
     }
 }
-
-
