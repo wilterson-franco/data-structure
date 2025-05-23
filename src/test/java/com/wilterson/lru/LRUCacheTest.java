@@ -11,7 +11,7 @@ class LRUCacheTest {
 
     @BeforeEach
     void setup() {
-        cache = new LRULinkedHashMap<>(3);
+        cache = new LinkedHashMapLRUCache<>(3);
     }
 
     @Test
