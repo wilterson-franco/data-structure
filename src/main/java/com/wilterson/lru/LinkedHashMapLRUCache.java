@@ -26,4 +26,9 @@ public class LinkedHashMapLRUCache<K, V> extends LinkedHashMap<K, V> implements 
     public V getValue(K key) {
         return getOrDefault(key, null);
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getName();
+    }
 }

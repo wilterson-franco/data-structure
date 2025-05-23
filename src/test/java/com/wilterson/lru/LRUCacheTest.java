@@ -2,20 +2,16 @@ package com.wilterson.lru;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import java.util.stream.Stream;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class LRUCacheTest {
 
-    private LRUCache<Integer, String> cache;
-
-    @BeforeEach
-    void setup() {
-        cache = new LinkedHashMapLRUCache<>(3);
-    }
-
-    @Test
-    void whenEmptyCache_thenItemShouldBeAdded() {
+    @ParameterizedTest
+    @MethodSource("buildConcreteCache")
+    void whenEmptyCache_thenItemShouldBeAdded(LRUCache<Integer, String> cache) {
 
         // given
 
@@ -26,8 +22,9 @@ class LRUCacheTest {
         assertThat(cache.getValue(1)).isEqualTo("My String");
     }
 
-    @Test
-    void whenFullCache_thenOldestShouldBeEvicted() {
+    @ParameterizedTest
+    @MethodSource("buildConcreteCache")
+    void whenFullCache_thenOldestShouldBeEvicted(LRUCache<Integer, String> cache) {
 
         // given
 
@@ -41,8 +38,9 @@ class LRUCacheTest {
         assertThat(cache.getValue(1)).isNull();
     }
 
-    @Test
-    void whenItemAccessed_thenItShouldMoveToTop() {
+    @ParameterizedTest
+    @MethodSource("buildConcreteCache")
+    void whenItemAccessed_thenItShouldMoveToTop(LRUCache<Integer, String> cache) {
 
         // given
 
@@ -58,8 +56,9 @@ class LRUCacheTest {
         assertThat(cache.getValue(2)).isNull();
     }
 
-    @Test
-    void whenItemUpdated_thenGetShouldReturnNewValue() {
+    @ParameterizedTest
+    @MethodSource("buildConcreteCache")
+    void whenItemUpdated_thenGetShouldReturnNewValue(LRUCache<Integer, String> cache) {
 
         // given
 
@@ -69,5 +68,11 @@ class LRUCacheTest {
 
         // then
         assertThat(cache.getValue(1)).isEqualTo("BBB");
+    }
+
+    private static Stream<Arguments> buildConcreteCache() {
+        return Stream.of(
+                Arguments.of(new LinkedHashMapLRUCache<>(3)),
+                Arguments.of(new CustomLRUCache<>(3)));
     }
 }
