@@ -70,9 +70,44 @@ class LRUCacheTest {
         assertThat(cache.getValue(1)).isEqualTo("BBB");
     }
 
+    @ParameterizedTest
+    @MethodSource("buildConcreteCache")
+    void whenDuplicateValueUnderDifferentKeys_thenCacheShouldHaveSizeTwo(LRUCache<Integer, String> cache) {
+
+        // given
+
+        // when
+        cache.putValue(1, "MyString");
+        cache.putValue(2, "MyString");
+
+        // then
+        assertThat(cache.getValue(1)).isEqualTo("MyString");
+        assertThat(cache.getValue(2)).isEqualTo("MyString");
+    }
+
+    @ParameterizedTest
+    @MethodSource("buildConcreteCache")
+    void givenFullCacheWithTwoValuesUnderDifferentKeys_whenFirstItemRemoved_thenFirstItemShouldNotBeInTheCache(LRUCache<Integer, String> cache) {
+
+        // given
+
+        // when
+        cache.putValue(2, "MyString");
+        cache.putValue(1, "MyString");
+        cache.putValue(3, "MyString");
+        cache.putValue(4, "AnotherString");
+
+        // then
+        assertThat(cache.getValue(2)).isNull();
+        assertThat(cache.getValue(1)).isEqualTo("MyString");
+        assertThat(cache.getValue(3)).isEqualTo("MyString");
+        assertThat(cache.getValue(4)).isEqualTo("AnotherString");
+    }
+
     private static Stream<Arguments> buildConcreteCache() {
         return Stream.of(
                 Arguments.of(new LinkedHashMapLRUCache<>(3)),
-                Arguments.of(new CustomLRUCache<>(3)));
+                Arguments.of(new CustomLRUCache<>(3)),
+                Arguments.of(new Custom2LRUCache<>(3)));
     }
 }
