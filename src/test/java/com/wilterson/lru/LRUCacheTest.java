@@ -108,6 +108,7 @@ class LRUCacheTest {
         return Stream.of(
                 Arguments.of(new LinkedHashMapLRUCache<>(3)),
                 Arguments.of(new CustomLRUCache<>(3)),
-                Arguments.of(new Custom2LRUCache<>(3)));
+                Arguments.of(new Custom2LRUCache<>(3)),
+                Arguments.of(new Custom3LRUCache<>(3)));
     }
 }
