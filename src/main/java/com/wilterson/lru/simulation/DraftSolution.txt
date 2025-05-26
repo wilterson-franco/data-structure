@@ -1,0 +1,253 @@
+Implement a Cache data structure using a Least Recently Used algorithm. A Cache stores as many elements as possible, and when full, discards the least recently used items first. Please implement a constructor that takes the desired capacity as well as the put(K k, V v), and get(K k) methods.
+
+
+
+
+interface LRUCache<K, V> {
+
+    V putValue(K k, V v);
+
+    V get(K k)
+}
+
+LRUCacheLinkedHashMap<K, V> extends LinkedHashMap<K, V> implements LRUCache<K, V> {
+
+    private int capacity;
+
+    public LRUCacheCustom(int capacity) {
+        super(capacity, 0.75F, true);
+        this.capacity = capacity;
+    }
+
+    @Override
+    public boolean removeElderlyElementPolicy() {
+        return capacity < size();
+    }
+
+    @Override
+    public V putValue(K key, V value) {
+        return put(key, value);
+    }
+
+    @Override
+    public V get(K key) {
+        return getOrDefault(key, null);
+    }
+}
+
+LRUCacheWithLinkedHashSet<K, V> implements LRUCache<K, V> {
+
+    private int capacity;
+    private Map<K, V> cacheMap;
+    private List<Node<K, V>> linkedList;
+
+    public LRUCacheCustom(int capacity) {
+        this.capacity = capacity;
+        cacheMap = new HashMap<>(capacity);
+        linkedList = new LinkedHashSet<>();
+    }
+
+    public boolean removeElderlyElementPolicy() {
+        return capacity < cacheMap.size();
+    }
+
+    @Override
+    public V putValue(K key, V value) {
+
+        if (alreadyCached(key)) {
+            V existingValue = cacheMap.put(key, value);
+            linkedList.remove(new Node<>(key, existingValue));
+            linkedList.addFirst(new Node<>(key, value));
+        }
+
+        if (removeElderlyElementPolicy()) {
+            removeElderlyElement();
+        }
+
+        cacheMap.put(key, value);
+
+        return value;
+    }
+
+    @Override
+    public V get(K key) {
+
+        V value = cacheMap.get(key);
+
+        moveToHead(new Node<>(key, value));
+
+        return value;
+    }
+
+    private boolean alreadyCached(K key) {
+        return cacheMap.contains(key);
+    }
+
+    private void removeElderlyElement() {
+        linkedList.removeLast();
+    }
+
+    private void moveToHead(Node<K, V> node) {
+        linkedList.remove(node);
+        linkedList.addFirst(node);
+    }
+
+    static private record Node<K, V>(K key, V value) {
+    }
+}
+
+
+interface LRUList<T> {
+
+    void addFirst(T node);
+
+    T removeLast();
+
+    T remove(T node);
+
+}
+
+CustomLinkedList<T> implements LRUList<T> {
+
+    private Element<T> head;
+    private Element<T> tail;
+    private int size;
+
+    public void addFirst(T node) {
+
+        Element<T> element = new Element<>(node, head, null);
+
+        if (head == null) {
+            head = tail = element;
+            return;
+        }
+
+        head = element;
+
+    }
+
+    public T removeLast() {
+
+        if (tail == null) {
+            return null;
+        }
+
+        Element<T> toRemove = tail;
+
+        if (tail == head) {
+            tail = head = null;
+            return toRemove.data;
+        }
+
+
+        tail = tail.previous;
+        tail.next = null;
+
+        return toRemove.data;
+    }
+
+    public  T remove(T data) {
+
+        Element<T> element = head;
+
+        while(element != null) {
+
+            if (element.data.equals(data)) {
+
+                if (element != head) {
+                    element.previous.next = element.next;
+                } else {
+                    head = element.next;
+                    element.next = null;
+                }
+
+                if (element != tail) {
+                    element.next.previous = element.previous;
+                } else {
+                    tail = element.previous;
+                    tail.previous = null;
+                }
+
+                return element.data;
+
+            }
+
+            element = element.next();
+        }
+
+        return null;
+    }
+
+    static private class Element<T> {
+        privagte T data;
+        private Element<T> next;
+        private Element<T> prev;
+
+        public Element(T data, Element<T> next, Element<T> prev) {
+            this.data = data;
+            this.next = next;
+            this.prev = prev;
+        }
+    }
+}
+
+LRUCacheWithCustomLinkedList<K, V> implements LRUCache<K, V> {
+
+    private int capacity;
+    private Map<K, V> cacheMap;
+    private LRUList<Node<K, V>> linkedList;
+
+    public LRUCacheCustom(int capacity) {
+        this.capacity = capacity;
+        cacheMap = new HashMap<>(capacity);
+        linkedList = new LinkedHashSet<>();
+    }
+
+    public boolean removeElderlyElementPolicy() {
+        return capacity < cacheMap.size();
+    }
+
+    @Override
+    public V putValue(K key, V value) {
+
+        if (alreadyCached(key)) {
+            V existingValue = cacheMap.put(key, value);
+            linkedList.remove(new Node<>(key, existingValue));
+            linkedList.addFirst(new Node<>(key, value));
+        }
+
+        if (removeElderlyElementPolicy()) {
+            removeElderlyElement();
+        }
+
+        cacheMap.put(key, value);
+
+        return value;
+    }
+
+    @Override
+    public V get(K key) {
+
+        V value = cacheMap.get(key);
+
+        moveToHead(new Node<>(key, value));
+
+        return value;
+    }
+
+    private boolean alreadyCached(K key) {
+        return cacheMap.contains(key);
+    }
+
+    private void removeElderlyElement() {
+        linkedList.removeLast();
+    }
+
+    private void moveToHead(Node<K, V> node) {
+        linkedList.remove(node);
+        linkedList.addFirst(node);
+    }
+
+    static private record Node<K, V>(K key, V value) {
+    }
+}
