@@ -1,0 +1,267 @@
+Develop a class that implements a Set data structure. A Set is a collection containing no duplicate elements and is primarily used to test whether a member is contained within, rather than retrieving a particular member. Please implement the add(element), remove(element), contains(element), and  __len__ methods using arrays -- use of dict is not allowed
+
+
+
+
+interface CustomSet<T> {
+    void add(T element);
+    T remove(T element);
+    boolean contains(T element);
+    int size();
+}
+
+interface Bucket {
+    void add(Object element);
+    Object remove(Object element);
+    boolean contains(Object element);
+    int size();
+}
+
+class DoublyLinkedListBucket {
+
+    private Node head;
+    private Node tail;
+    private int size;
+
+    public void add(Object element) {
+
+        if (head == null) {
+            head = tail = new Node(element, null, null);
+            return;
+        }
+
+        head = new Node(element, head, null);
+        size++;
+    }
+
+    public Object remove(Object element) {
+
+        Optional<Node> optional = findNode(element);
+
+        if (optional.isPresent()) {
+
+            Node toRemove = optional.get();
+
+            if (isHead(toRemove)) {
+                toRemove.next.prev = null;
+                head = toRemove.next;
+            } else {
+                toRemove.prev.next = toRemove.next;
+            }
+
+            if (isTail(toRemove)) {
+                toRemove.prev.next = null;
+                tail = toRemove.prev;
+            } else {
+                toRemove.next.prev = toRemove.prev;
+            }
+
+            size--;
+
+            return toRemove;
+        }
+
+        return null;
+    }
+
+    private boolean isHead(Node node) {
+        return node == head;
+    }
+
+    private boolean isTail(Node node) {
+        return node == tail;
+    }
+
+    public boolean contains(Object element) {
+
+        if (findNode(element).isPresent()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    private Optional<Node> findNode(Object element) {
+
+        Node node = head;
+
+        while (node != null) {
+            if (node.data.equals(element)) {
+                return Optional.of(node);
+            }
+            node = node.next;
+        }
+
+        return Optional.empty();
+    }
+
+    private static class Node {
+        private Object data;
+        private Node next;
+        private Node prev;
+
+        public Node(Object data) {
+            this.data = data;
+            this.next = null;
+            this.prev = null;
+        }
+
+        public Node(Object data, Node next, Node prev) {
+            this.data = data;
+            this.next = next;
+            this.prev = prev;
+        }
+    }
+}
+
+class ListBucket implements Bucket {
+
+    private List<Object> items;
+
+    public ListBucket() {
+        items = new ArrayList<>();
+    }
+
+    @Overridden
+    public void add(Object element) {
+        items.add(element);
+    }
+
+    @Overridden
+    public Object remove(element) {
+        return items.remove(element);
+    }
+
+    @Overridden
+    public boolean contains(Object element) {
+        return items.contains(element)
+    }
+
+    @Overridden
+    public int size() {
+        return items.size();
+    }
+}
+
+class ArrayBucket implements Bucket {
+
+    private static final int INITIAL_CAPACITY = 4;
+
+    private int capacity;
+    private int size;
+
+    private Object[] items;
+
+    public ArrayBucket() {
+        items = new Object[INITIAL_CAPACITY];
+        capacity = INITIAL_CAPACITY;
+    }
+
+    @Overridden
+    public void add(Object element) {
+
+        if (size == capacity) {
+            // TODO:
+            //   Create bigger array
+            //   Move data to it
+            //   update capacity field
+        }
+
+        items[size] = element;
+        size++;
+    }
+
+    @Overridden
+    public Object remove(Object element) {
+
+        int index = indexOf(element);
+
+        if (index == -1) {
+            return null;
+        }
+
+        Object toRemove = items[index];
+
+        if (index < size-1) {
+            for (int i = index; i < size-1; i++) {
+                items[i] = items[i+1];
+            }
+        }
+
+        size--;
+        element[size] = null;
+
+        return toRemove;
+    }
+
+    @Overridden
+    public boolean contains(Object element) {
+        return indexOf(element) != -1;
+    }
+
+    @Overridden
+    public int size() {
+        return size;
+    }
+
+    private int indexOf(Object element) {
+        for (int i = 0; i < size; i++) {
+            if (items[i].equals(element)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+}
+
+class SimCustomHashSet<T> implements CustomSet<T> {
+
+    private static final int INITIAL_CAPACITY = 4;
+
+    private int capacity;
+    private List<Bucket> buckets;
+
+    public CustomHashSet() {
+
+        capacity = INITIAL_CAPACITY;
+        buckets = new ArrayList<>();
+
+        for (int i =0; i < capacity; i++) {
+            buckets.add(new DoublyLinkedListBucket());
+        }
+    }
+
+    @Override
+    public void add(T element) {
+        if (!contains(element)) {
+            getBucketFor(element).add(element);
+        }
+    }
+
+    @Override
+    public T remove(T element) {
+        return getBucketFor(element).remove(element);
+    }
+
+    @Override
+    public boolean contains(T element) {
+        return getBucketFor(element).contains(element);
+    }
+
+    @Override
+    public int size() {
+        return buckets.stream().mapToInt(bucket -> bucket.size()).sum();
+    }
+
+    private Bucket getBucketFor(T element) {
+        return buckets.get(findBucketIndex(element));
+    }
+
+    private int findBucketIndex(T element) {
+        return (capacity - 1) & element.hashCode();
+    }
+}
