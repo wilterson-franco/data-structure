@@ -17,7 +17,7 @@ class MinHeapTest {
 
         // given
         int[] input = readInput(new ByteArrayInputStream("4,1,3,2".getBytes()));
-        MinHeap minHeap = new MinHeap();
+        MinHeap minHeap = new MinHeap(16);
 
         // when
         build(minHeap, input);
@@ -33,7 +33,7 @@ class MinHeapTest {
 
         // given
         int[] input = readInput(new ByteArrayInputStream("4,1,3,2,5".getBytes()));
-        MinHeap minHeap = new MinHeap();
+        MinHeap minHeap = new MinHeap(16);
 
         // when
         build(minHeap, input);
@@ -49,7 +49,7 @@ class MinHeapTest {
 
         // given
         int[] input = readInput(new ByteArrayInputStream("4,3,2,5,1".getBytes()));
-        MinHeap minHeap = new MinHeap();
+        MinHeap minHeap = new MinHeap(16);
 
         // when
         build(minHeap, input);
@@ -65,7 +65,7 @@ class MinHeapTest {
 
         // given
         int[] input = readInput(new ByteArrayInputStream("5,4,3,2,1".getBytes()));
-        MinHeap minHeap = new MinHeap();
+        MinHeap minHeap = new MinHeap(16);
 
         // when
         build(minHeap, input);
@@ -81,7 +81,7 @@ class MinHeapTest {
 
         // given
         int[] input = readInput(new ByteArrayInputStream("5".getBytes()));
-        MinHeap minHeap = new MinHeap();
+        MinHeap minHeap = new MinHeap(16);
 
         // when
         build(minHeap, input);
@@ -97,7 +97,7 @@ class MinHeapTest {
 
         // given
         int[] input = readInput(new ByteArrayInputStream("1,2,3,4,5,6,7".getBytes()));
-        MinHeap minHeap = new MinHeap();
+        MinHeap minHeap = new MinHeap(16);
 
         // when
         build(minHeap, input);
@@ -113,7 +113,7 @@ class MinHeapTest {
 
         // given
         int[] input = readInput(new ByteArrayInputStream("1,2,3,4,5,6,7,8,9,10,11,12,13,14".getBytes()));
-        MinHeap minHeap = new MinHeap();
+        MinHeap minHeap = new MinHeap(16);
 
         // when
         build(minHeap, input);
@@ -129,7 +129,7 @@ class MinHeapTest {
 
         // given
         int[] input = readInput(new ByteArrayInputStream("14,13,12,11,10,9,8,7,6,5,4,3,2,1".getBytes()));
-        MinHeap minHeap = new MinHeap();
+        MinHeap minHeap = new MinHeap(16);
 
         // when
         build(minHeap, input);
